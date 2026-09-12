@@ -6,6 +6,9 @@ user-invocable: true
 disable-model-invocation: false
 context: fork
 agent: Explore
+background: false
+paths:
+  - "src/**/*.{js,jsx}"
 ---
 
 ## Role

@@ -4,7 +4,8 @@ description: Fetch a GitHub issue, explore the repository, and generate an imple
 argument-hint: <issue-number>
 user-invocable: true
 disable-model-invocation: false
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read, Grep, Glob, Write, Bash(git remote:*), Bash(git branch:*), Bash(gh issue view:*)
+effort: high
 ---
 
 ## Dynamic Context
