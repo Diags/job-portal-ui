@@ -172,7 +172,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = async (email, password, userType) => {
+  // Login.jsx passes the user type selected on the form, but the mock auth
+  // resolves the role from the stored user record instead, so it is accepted
+  // and ignored. Rename it once a real backend verifies the claim.
+  const login = async (email, password, _userType) => {
     setIsLoading(true);
 
     try {
@@ -231,7 +234,7 @@ export const AuthProvider = ({ children }) => {
           );
 
           userWithRole.profileComplete = isComplete;
-        } catch (error) {
+        } catch {
           // If error, keep profileComplete as false
         }
       } else {
@@ -323,7 +326,7 @@ export const AuthProvider = ({ children }) => {
       setUser(updatedUser);
       setIsLoading(false);
       return { success: true, user: updatedUser };
-    } catch (error) {
+    } catch {
       setIsLoading(false);
       return { success: false, error: "Failed to update profile" };
     }

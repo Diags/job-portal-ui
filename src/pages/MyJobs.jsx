@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { useJobsData } from '../contexts/JobsDataContext';
 
 const MyJobs = () => {
-  const { theme } = useTheme();
   const { user, isEmployer, isAuthenticated } = useAuth();
   const { forceRefresh } = useJobsData();
   const [jobs, setJobs] = useState([]);
@@ -17,10 +15,16 @@ const MyJobs = () => {
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const [companyInfo, setCompanyInfo] = useState(null);
 
+  // fetchJobs is deliberately left out of the dependency list. It calls
+  // forceRefresh, which runs loadJobs(true); that always sets lastFetchTime,
+  // which is loadJobs's own dependency. Listing fetchJobs here would give it a
+  // new identity after every fetch and re-run this effect forever. The jobs
+  // list is meant to load once the employer is authenticated.
   useEffect(() => {
     if (isAuthenticated && isEmployer) {
       fetchJobs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isEmployer]);
 
   const fetchJobs = async () => {
@@ -126,7 +130,8 @@ const MyJobs = () => {
     }
   };
 
-  const getStatusBadgeClass = (status) => {
+  // Ready for a status badge that the job list does not render yet.
+  const _getStatusBadgeClass = (status) => {
     switch (status) {
       case 'ACTIVE':
         return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
