@@ -96,10 +96,12 @@ export const JobsDataProvider = ({ children }) => {
     return jobs.filter(job => job.category === category);
   };
 
-  const forceRefresh = async () => {
+  // Memoized so consumers can list it in effect dependencies without the
+  // identity changing on every provider render and re-triggering the effect.
+  const forceRefresh = useCallback(async () => {
     console.log('[JobsDataContext] Force refresh requested');
     await loadJobs(true);
-  };
+  }, [loadJobs]);
 
   const updateJobApplicationsCount = (jobId, increment = true) => {
     console.log(`[JobsDataContext] ${increment ? 'Incrementing' : 'Decrementing'} applications count for job ${jobId}`);
