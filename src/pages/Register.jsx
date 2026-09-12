@@ -114,7 +114,10 @@ const Register = () => {
     }
   };
 
-  const handleUserTypeChange = (e) => {
+  // Clears company when switching account type. No control in the form changes
+  // userType today, so registration is always jobSeeker and the employer
+  // branch of validation is unreachable — wire this to a selector to enable it.
+  const _handleUserTypeChange = (e) => {
     setFormData(prev => ({
       ...prev,
       userType: e.target.value,
