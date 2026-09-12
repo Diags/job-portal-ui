@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getProfile, updateProfile as updateProfileApi, getProfilePictureUrl } from '../services/profileService';
 
 const Profile = () => {
-  const { user, updateProfile, updateProfileComplete, isJobSeeker, isLoading: authLoading } = useAuth();
+  const { user, updateProfileComplete, isJobSeeker, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -30,6 +30,10 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
 
+  // Depends on user?.userId rather than the whole user object on purpose.
+  // Saving the form calls updateProfileComplete, which spreads user into a new
+  // object and calls setUser; depending on user would re-run this effect right
+  // after a save and overwrite the form with freshly reloaded values.
   useEffect(() => {
     // Wait for auth to load before checking
     if (authLoading) return;
@@ -116,6 +120,7 @@ const Profile = () => {
     if (user) {
       loadProfile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.userId, isJobSeeker, navigate, authLoading]);
 
   const showNotification = (message, type = 'success') => {
@@ -162,7 +167,11 @@ const Profile = () => {
     }
   };
 
-  const addSkill = () => {
+  // The skills, education and work-history editors below operate on state that
+  // formData already carries, but the form does not yet render the controls
+  // that call them. They are prefixed with _ to satisfy no-unused-vars until
+  // that UI is built — delete them only if the feature is dropped for good.
+  const _addSkill = () => {
     if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
       setFormData(prev => ({
         ...prev,
@@ -172,14 +181,14 @@ const Profile = () => {
     }
   };
 
-  const removeSkill = (skillToRemove) => {
+  const _removeSkill = (skillToRemove) => {
     setFormData(prev => ({
       ...prev,
       skills: prev.skills.filter(skill => skill !== skillToRemove)
     }));
   };
 
-  const addEducation = () => {
+  const _addEducation = () => {
     setFormData(prev => ({
       ...prev,
       education: [...prev.education, {
@@ -192,7 +201,7 @@ const Profile = () => {
     }));
   };
 
-  const updateEducation = (id, field, value) => {
+  const _updateEducation = (id, field, value) => {
     setFormData(prev => ({
       ...prev,
       education: prev.education.map(edu => 
@@ -201,14 +210,14 @@ const Profile = () => {
     }));
   };
 
-  const removeEducation = (id) => {
+  const _removeEducation = (id) => {
     setFormData(prev => ({
       ...prev,
       education: prev.education.filter(edu => edu.id !== id)
     }));
   };
 
-  const addWorkHistory = () => {
+  const _addWorkHistory = () => {
     setFormData(prev => ({
       ...prev,
       workHistory: [...prev.workHistory, {
@@ -223,7 +232,7 @@ const Profile = () => {
     }));
   };
 
-  const updateWorkHistory = (id, field, value) => {
+  const _updateWorkHistory = (id, field, value) => {
     setFormData(prev => ({
       ...prev,
       workHistory: prev.workHistory.map(work => 
@@ -232,7 +241,7 @@ const Profile = () => {
     }));
   };
 
-  const removeWorkHistory = (id) => {
+  const _removeWorkHistory = (id) => {
     setFormData(prev => ({
       ...prev,
       workHistory: prev.workHistory.filter(work => work.id !== id)
