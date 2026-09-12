@@ -10,46 +10,41 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "hooks": {
-    "Notification": [
+    "PreToolUse": [
       {
-        "matcher": "",
+        "matcher": "Write|Edit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "˝ -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+            "command": "python3 .claude/hooks/secret-guard.py",
+            "statusMessage": "Scanning for hardcoded secrets",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-files.sh",
+            "statusMessage": "Checking protected paths",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/line_limit.py",
+            "statusMessage": "Checking file length",
+            "timeout": 15
           }
         ]
       }
     ],
-    "PreToolUse": [
+    "Notification": [
       {
-        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/secret-guard.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/line_limit.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/protect-files.sh"
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'",
+            "timeout": 10
           }
         ]
       }
-
     ]
   }
 }

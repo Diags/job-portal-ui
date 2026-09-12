@@ -1,4 +1,8 @@
 ---
+paths:
+  - "src/**/*.{js,jsx}"
+  - "eslint.config.js"
+  - "vite.config.js"
 description: Core coding conventions for the JobPortal React codebase
 ---
 
